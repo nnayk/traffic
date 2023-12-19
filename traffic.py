@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import os
 import sys
-import tensorflow as tf
+
+# import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
@@ -14,7 +15,6 @@ TEST_SIZE = 0.4
 
 
 def main():
-
     # Check command-line arguments
     if len(sys.argv) not in [2, 3]:
         sys.exit("Usage: python traffic.py data_directory [model.h5]")
@@ -35,7 +35,7 @@ def main():
     model.fit(x_train, y_train, epochs=EPOCHS)
 
     # Evaluate neural network performance
-    model.evaluate(x_test,  y_test, verbose=2)
+    model.evaluate(x_test, y_test, verbose=2)
 
     # Save model to file
     if len(sys.argv) == 3:
@@ -58,7 +58,28 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    raise NotImplementedError
+    # Initialize variables
+    images = []
+    labels = []
+
+    # Iterate through all the category dirs.
+    for category in range(NUM_CATEGORIES):
+        # Get the path to the image category dir.
+        path = os.path.join(data_dir, str(category))
+        # Process each image in the dir.
+        for image in os.listdir(path):
+            # Get the path to the image
+            image_path = os.path.join(path, image)
+
+            # Read and resize the image
+            img = cv2.imread(image_path)
+            resized_img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+
+            # Append to the image data lists
+            images.append(resized_img)
+            labels.append(category)
+
+    return (images, labels)
 
 
 def get_model():
